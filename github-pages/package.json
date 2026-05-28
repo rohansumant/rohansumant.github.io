@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "deploy": "npm next build && cp -r out ../",
+    "deploy": "npm next build && cp -r out ../docs",
     "lint": "eslint"
   },
   "dependencies": {
