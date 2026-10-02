@@ -5,12 +5,29 @@ export function Welcome() {
   const [quote, setQuote] = useState("");
   const [viewcount, setViewCount] = useState(undefined);
 
+  useEffect(() => {
+    if (!quote || !viewcount) return;
+    sessionStorage.setItem('sessionCache', JSON.stringify({
+      quote: quote,
+      viewCount: viewcount
+    }, null, 2))
+  }, [quote, viewcount]);
 
   useEffect(() => {
+    const sessionCache = sessionStorage.getItem('sessionCache');
+    if (sessionCache) {
+      const cache = JSON.parse(sessionCache);
+      if (cache.quote && cache.viewCount) {
+        setQuote(cache.quote);
+        setViewCount(cache.viewCount);
+        return;
+      }
+    }
+
     const fetchQuote = async () => {
       const result = await fetch("https://helloworld-280029092205.us-central1.run.app/v1/quote");
       const body = await result.json();
-      setQuote(body.quote);
+      if (body) setQuote(body.quote);
     }
 
     const pageName = "home";
