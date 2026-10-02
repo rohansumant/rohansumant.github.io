@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
 
 export function Welcome() {
 
   const [quote, setQuote] = useState("");
+  const [viewcount, setViewCount] = useState(undefined);
+
 
   useEffect(() => {
     const fetchQuote = async () => {
@@ -12,7 +13,21 @@ export function Welcome() {
       setQuote(body.quote);
     }
 
+    const pageName = "home";
+    const fetchPageViewCount = async () => {
+      const result = await fetch(`https://helloworld-280029092205.us-central1.run.app/v1/${pageName}/viewcount`);
+      const body = await result.json();
+      if (body) setViewCount(body.viewCount);
+    }
+
     fetchQuote();
+    fetchPageViewCount();
+
+    // update page view count given that this page has rendered
+    fetch(`https://helloworld-280029092205.us-central1.run.app/v1/${pageName}/viewcount`, {
+      method: "POST"
+    });
+
   }, []);
 
   return (
@@ -35,11 +50,15 @@ export function Welcome() {
         Outside of work, my interests are Chess, bouldering, and reading.
       </div><br />
       <div>
-        This webpage is a work in progress. {quote && (<span>
-          Here's a little something <sup><a href="https://linux.die.net/man/6/fortune">1</a></sup> for stopping by:
+        This webpage is a work in progress. You can check out my projects <a href="https://github.com/rohansumant">here</a>.
+        {quote && (<span> In the meantime here's a little something <sup><a href="https://linux.die.net/man/6/fortune">1</a></sup> for stopping by:
           <pre>{quote}</pre>
         </span>)}
       </div>
+      <hr />
+      <footer>
+        {viewcount && `Page views (last 7 days): ${viewcount}`}
+      </footer>
     </main>
   );
 }
